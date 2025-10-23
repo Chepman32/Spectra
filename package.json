@@ -33,7 +33,8 @@
     "react-native-permissions": "^4.1.5",
     "react-native-share": "^10.2.1",
     "react-native-haptic-feedback": "^2.3.0",
-    "react-native-linear-gradient": "^2.8.3"
+    "react-native-linear-gradient": "^2.8.3",
+    "@react-native-camera-roll/camera-roll": "^7.8.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

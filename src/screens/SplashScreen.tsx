@@ -1,25 +1,77 @@
 /**
- * Splash Screen - Initial loading screen
- * TODO: Implement particle animation with Skia
+ * Splash Screen - Initial loading screen with animation
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withSequence,
+  withDelay,
+  withTiming,
+} from 'react-native-reanimated';
+import LinearGradient from 'react-native-linear-gradient';
 import {Colors, Typography} from '@constants';
+import type {SplashScreenProps} from '@navigation/types';
 
-const SplashScreen: React.FC = () => {
+const SplashScreen: React.FC<SplashScreenProps> = ({navigation}) => {
+  const logoOpacity = useSharedValue(0);
+  const logoScale = useSharedValue(0.8);
+  const taglineOpacity = useSharedValue(0);
+
+  useEffect(() => {
+    // Animate logo entrance
+    logoOpacity.value = withDelay(
+      300,
+      withTiming(1, {duration: 600}),
+    );
+    logoScale.value = withDelay(
+      300,
+      withSpring(1, {damping: 15, stiffness: 90}),
+    );
+
+    // Animate tagline
+    taglineOpacity.value = withDelay(
+      800,
+      withTiming(1, {duration: 400}),
+    );
+
+    // Navigate to Home after animation
+    const timeout = setTimeout(() => {
+      navigation.replace('Home');
+    }, 2500);
+
+    return () => clearTimeout(timeout);
+  }, [navigation]);
+
+  const logoAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: logoOpacity.value,
+    transform: [{scale: logoScale.value}],
+  }));
+
+  const taglineAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: taglineOpacity.value,
+  }));
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.logo}>SPECTRA</Text>
-      <Text style={styles.tagline}>Transform Every Moment</Text>
-    </View>
+    <LinearGradient
+      colors={['#1A0B2E', '#0F0F0F']}
+      style={styles.container}>
+      <Animated.Text style={[styles.logo, logoAnimatedStyle]}>
+        SPECTRA
+      </Animated.Text>
+      <Animated.Text style={[styles.tagline, taglineAnimatedStyle]}>
+        Transform Every Moment
+      </Animated.Text>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.backgroundDark,
     justifyContent: 'center',
     alignItems: 'center',
   },
